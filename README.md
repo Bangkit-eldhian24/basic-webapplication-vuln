@@ -33,5 +33,9 @@ This repo includes two intentionally vulnerable web applications created for pen
 Read the source file to identify the vulnerability implementation. This web application is still in development, so there may be some issues during testing.☕☕
 
 
- # <summary><strong>**INSTALLASI WEBAPP 01** </strong></summary>
+ # <summary><strong>**FIRST WEBAPP INSTALLATION** </strong></summary>
+ THIS TEST THIS WEBAPP HAS ENGLISH AND INDONESIAN LANGUAGES
+```
+nigga
+```
 
