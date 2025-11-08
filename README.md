@@ -21,6 +21,7 @@
 - Basic command injection on debug endpoint
 - Bilingual (English/Indonesian **available specifically for the first webapp**) 
 - Educational purpose only
+- **source = https://portswigger.net/web-security, https://owasp.org/Top10/2025/0x00_2025-Introduction/**
 
 # <summary><strong>**INTENDED USE**❗ </strong></summary>
 - Security education and awareness
