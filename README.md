@@ -36,6 +36,29 @@ Read the source file to identify the vulnerability implementation. This web appl
  # <summary><strong>**FIRST WEBAPP INSTALLATION** </strong></summary>
  THIS TEST THIS WEBAPP HAS ENGLISH AND INDONESIAN LANGUAGES
 ```
-nigga
+git clone https://github.com/Bangkit-eldhian24/basic-webapplication-vuln.git
+cd basic-webapplication-vuln
+cd l0g1nx
+```
+if you want it fast you can move it
+```
+mv l0g1nx ~/
+mv ~/basic-webapplication-vuln/l0g1nx ~/
+```
+
+**make virtual env**
+```
+python -m venv vuln_env
+source vuln_env/bin/activate 
+```
+vuln_env\Scripts\activate  # Windows
+
+**install dependencies**
+```
+pip install -r requirements.txt
+```
+**RUN**
+```
+python server.py
 ```
 
