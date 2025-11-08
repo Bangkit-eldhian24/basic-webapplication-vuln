@@ -62,4 +62,15 @@ pip install -r requirements.txt
 python server.py
 ```
 
-### <summary><strong>**INTENDED USE** </strong></summary>
+### <summary><strong>**visualization👁️** </strong></summary>
+WEB APP 1
+
+<img width="1302" height="947" alt="Screenshot_20251109_035029" src="https://github.com/user-attachments/assets/3eb27b1e-a766-4a20-94f5-4c8eda96a320" />
+
+<img width="1392" height="737" alt="Screenshot_20251109_045651" src="https://github.com/user-attachments/assets/f05ba7f4-9ccc-46c5-b700-7d9714e58b1c" />
+
+
+
+
+
+
