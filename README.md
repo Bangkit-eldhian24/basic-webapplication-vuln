@@ -32,7 +32,7 @@
 This repo includes two intentionally vulnerable web applications created for penetration testing training and practice. While both serve the same educational purpose, each application implements different flows and outputs to support specific exercises (e.g., reflective vs. persistent XSS scenarios, basic SQLi vs. chained RCE). Both applications are still under development: documentation, additional test cases, and deployment options (e.g., docker-compose) need to be completed to support secure and scalable lab use.
 Read the source file to identify the vulnerability implementation. This web application is still in development, so there may be some issues during testing.☕☕
 
-# <summary><strong>**ABOUT THIS AND WHY??**❓</strong></summary>
+# <summary><strong>ABOUT THIS AND WHY❓</strong></summary>
 This project provides two web applications specifically designed as training environments for web application security testing (pentesting/red-team exercises). While both applications share the same educational goal—to introduce and explore a number of common vulnerabilities—they each follow a different architecture and output flow to allow for a wider variety of exercises (e.g., reflected vs. stored XSS, simple SQLi vs. chained exploitation via file upload). Both applications are currently prototypes: they serve as basic labs but require further development to enrich scenarios, add test cases, improve documentation, and add comprehensive mitigation measures.
 
  # <summary><strong>**WEBAPP INSTALLATION** </strong></summary>
