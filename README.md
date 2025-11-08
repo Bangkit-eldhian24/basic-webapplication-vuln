@@ -3,6 +3,10 @@
 <img src="https://img.shields.io/badge/Apache--2.0-green?style=for-the-badge" />
 <img src="https://img.shields.io/badge/MIT-green?style=for-the-badge" />
 
+# <summary><strong>⚠️ Legal learning ⚠️</strong></summary>
+
+⚠️⚠️This application is provided solely for educational and testing purposes in an environment you control. Do not use it to attack systems or networks without explicit permission.⚠️⚠️
+
 🛡️ A small intentionally-vulnerable web application meant for learning web penetration testing, exploit development basics, and defensive validation. Use it only in a controlled environment. 🛡️
 
 ### Features (vulnerabilities included)🎯
@@ -15,7 +19,9 @@
 - Basic command injection on debug endpoint
 
 # <summary><strong>NOTE </strong></summary>
- Read the source file to identify the vulnerability implementation. This web application is still in development, so there may be some issues during testing.☕☕
+This repo includes two intentionally vulnerable web applications created for penetration testing training and practice. While both serve the same educational purpose, each application implements different flows and outputs to support specific exercises (e.g., reflective vs. persistent XSS scenarios, basic SQLi vs. chained RCE). Both applications are still under development: documentation, additional test cases, and deployment options (e.g., docker-compose) need to be completed to support secure and scalable lab use.
+Read the source file to identify the vulnerability implementation. This web application is still in development, so there may be some issues during testing.☕☕
 
 
- 
+ # <summary><strong>NOTE </strong></summary>
+
