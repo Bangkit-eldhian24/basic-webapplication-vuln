@@ -11,6 +11,7 @@
 - CSRF (sensitive forms without tokens)
 - Basic command injection on debug endpoint
 
+
  ### NOTE : Read the source file to identify the vulnerability implementation. This web application is still in development, so there may be some issues during testing.☕☕
 
 
