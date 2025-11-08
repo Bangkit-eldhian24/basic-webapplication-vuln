@@ -62,3 +62,4 @@ pip install -r requirements.txt
 python server.py
 ```
 
+### <summary><strong>**INTENDED USE** </strong></summary>
