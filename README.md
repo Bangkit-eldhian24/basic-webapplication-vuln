@@ -22,7 +22,7 @@
 - Bilingual (English/Indonesian **available specifically for the first webapp**) 
 - Educational purpose only
 
-# <summary><strong>**INTENDED USE** </strong></summary>
+# <summary><strong>**INTENDED USE**❗ </strong></summary>
 - Security education and awareness
 - Penetration testing practice in controlled labs
 - Learning about web application security
@@ -32,6 +32,8 @@
 This repo includes two intentionally vulnerable web applications created for penetration testing training and practice. While both serve the same educational purpose, each application implements different flows and outputs to support specific exercises (e.g., reflective vs. persistent XSS scenarios, basic SQLi vs. chained RCE). Both applications are still under development: documentation, additional test cases, and deployment options (e.g., docker-compose) need to be completed to support secure and scalable lab use.
 Read the source file to identify the vulnerability implementation. This web application is still in development, so there may be some issues during testing.☕☕
 
+# <summary><strong>**ABOUT THIS AND WHY??**❓</strong></summary>
+This project provides two web applications specifically designed as training environments for web application security testing (pentesting/red-team exercises). While both applications share the same educational goal—to introduce and explore a number of common vulnerabilities—they each follow a different architecture and output flow to allow for a wider variety of exercises (e.g., reflected vs. stored XSS, simple SQLi vs. chained exploitation via file upload). Both applications are currently prototypes: they serve as basic labs but require further development to enrich scenarios, add test cases, improve documentation, and add comprehensive mitigation measures.
 
  # <summary><strong>**WEBAPP INSTALLATION** </strong></summary>
  THIS TEST THIS WEBAPP HAS ENGLISH AND INDONESIAN LANGUAGES
@@ -68,6 +70,7 @@ WEB APP V1
 <img width="1302" height="947" alt="Screenshot_20251109_035029" src="https://github.com/user-attachments/assets/3eb27b1e-a766-4a20-94f5-4c8eda96a320" />
 
 <img width="1392" height="737" alt="Screenshot_20251109_045651" src="https://github.com/user-attachments/assets/f05ba7f4-9ccc-46c5-b700-7d9714e58b1c" />
+
 
 WEB APP V2
 
