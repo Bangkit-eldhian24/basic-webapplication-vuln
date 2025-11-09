@@ -1,7 +1,6 @@
 # <summary><strong>Basic-Webapplication-vulneralbilites </strong></summary>
 
-<img src="https://img.shields.io/badge/Apache--2.0-green?style=for-the-badge" />
-<img src="https://img.shields.io/badge/MIT-green?style=for-the-badge" />
+<img src="https://img.shields.io/badge/Apache--2.0-green?style=for-the-badge" /> <img src="https://img.shields.io/badge/MIT-green?style=for-the-badge" />
 
 # <summary><strong>⚠️ SECURITY DISCLAMER ⚠️</strong></summary>
 
